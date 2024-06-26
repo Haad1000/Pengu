@@ -1,0 +1,295 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (code.Users)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    36.4%
+  </span>
+  <span class="absValue">
+    (4/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27.8%
+  </span>
+  <span class="absValue">
+    (20/72)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Users;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import code.Banning.Banned;
+&nbsp;import code.Banning.BannedRepository;
+&nbsp;import code.TeacherCourses.Teacher;
+&nbsp;import code.Users.TokenUtility;
+&nbsp;import code.Users.User;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpSession;
+&nbsp;import javax.websocket.server.PathParam;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; *
+&nbsp; * @author Vivek Bengre
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    BannedRepository bannedRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private TokenStore tokenStore;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;    public User currentUser;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; login(@RequestBody LoginRequest loginRequest) {
+<b class="fc">&nbsp;        List&lt;User&gt; userList = userRepository.findAll();</b>
+<b class="fc">&nbsp;        List&lt;Banned&gt; bList = bannedRepository.findAll();</b>
+<b class="fc">&nbsp;        for (User user : userList) {</b>
+<b class="nc">&nbsp;            Banned banned = bannedRepository.findByEmailId(loginRequest.getEmailId());</b>
+<b class="nc">&nbsp;            if(user.getIsActive().equals(IsActive.ACTIVE))</b>
+<b class="nc">&nbsp;                if (loginRequest.getEmailId().equals(user.getEmailId()) &amp;&amp; loginRequest.getPassword().equals(user.getPassword())) {</b>
+<b class="nc">&nbsp;                    String token = TokenUtility.generateNewToken();</b>
+<b class="nc">&nbsp;                    tokenStore.storeUser(token, user);</b>
+&nbsp;
+&nbsp;                    // Assuming user.getRole() returns the role of the user.
+<b class="nc">&nbsp;                    Roles.UserRoles userRole = user.getRole();</b>
+&nbsp;
+<b class="nc">&nbsp;                    int userId = user.getId();</b>
+&nbsp;
+&nbsp;                    // Including the role in the response along with the token.
+<b class="nc">&nbsp;                    return ResponseEntity.ok().body(Map.of(&quot;token&quot;, token, &quot;role&quot;, userRole, &quot;userId&quot;, userId));</b>
+&nbsp;                }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(&quot;error&quot;, &quot;Login failed&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/updateAcc/{token}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateAcc(@RequestBody RegisterRequest registerRequest, @PathVariable(name =&quot;token&quot;) String token) {
+<b class="nc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="nc">&nbsp;        if(user == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(failure);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        User editUser = userRepository.findById(user.getId());</b>
+<b class="nc">&nbsp;        if (editUser != null) {</b>
+<b class="nc">&nbsp;            editUser.setName(registerRequest.getName());</b>
+<b class="nc">&nbsp;            editUser.setEmailId(registerRequest.getEmailId());</b>
+<b class="nc">&nbsp;            editUser.setPassword(registerRequest.getPassword());</b>
+<b class="nc">&nbsp;            editUser.setRole(registerRequest.getRole());</b>
+<b class="nc">&nbsp;            userRepository.save(editUser);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok().body(success);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(failure);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/logout&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; logout(@RequestHeader(value=&quot;Authorization&quot;) String token) {
+<b class="nc">&nbsp;        tokenStore.removeUser(token);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(success);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/register&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; register(@RequestBody RegisterRequest registrationRequest) {
+<b class="fc">&nbsp;        if (registrationRequest.getName() == null || registrationRequest.getEmailId() == null || registrationRequest.getPassword() == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Registration details are incomplete.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Check if the email already exists in the database
+<b class="fc">&nbsp;        User emailExists = userRepository.findByEmailId(registrationRequest.getEmailId());</b>
+<b class="fc">&nbsp;        if (emailExists != null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Email already registered. Please use a different email.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        User newUser;
+&nbsp;
+<b class="fc">&nbsp;        if (registrationRequest.getRole() == Roles.UserRoles.TEACHER) {</b>
+&nbsp;            // If the role is TEACHER, instantiate a Teacher object with an empty list for teacherCourses
+<b class="nc">&nbsp;            newUser = new Teacher(</b>
+<b class="nc">&nbsp;                    registrationRequest.getName(),</b>
+<b class="nc">&nbsp;                    registrationRequest.getEmailId(),</b>
+<b class="nc">&nbsp;                    registrationRequest.getPassword(),</b>
+<b class="nc">&nbsp;                    registrationRequest.getRole(),</b>
+<b class="nc">&nbsp;                    registrationRequest.getIsActive(),</b>
+&nbsp;                    new ArrayList&lt;&gt;() // Initialize with an empty list for teacherCourses
+&nbsp;            );
+&nbsp;        } else {
+&nbsp;            // For other roles, instantiate a User object
+<b class="fc">&nbsp;            newUser = new User(</b>
+<b class="fc">&nbsp;                    registrationRequest.getName(),</b>
+<b class="fc">&nbsp;                    registrationRequest.getEmailId(),</b>
+<b class="fc">&nbsp;                    registrationRequest.getPassword(),</b>
+<b class="fc">&nbsp;                    registrationRequest.getRole(),</b>
+<b class="fc">&nbsp;                    registrationRequest.getIsActive()</b>
+&nbsp;            );
+&nbsp;        }
+<b class="fc">&nbsp;        userRepository.save(newUser); // This will save either a User or a Teacher, depending on the role</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(success);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/account/{token}&quot;)
+&nbsp;    public User account(@PathVariable(value=&quot;token&quot;, required = false) String token) {
+<b class="nc">&nbsp;        if (token == null || token.isEmpty()) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        User currentUser = tokenStore.getUser(token);</b>
+<b class="nc">&nbsp;        if (currentUser == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return currentUser;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/deleteAllUsers&quot;)
+&nbsp;    String deleteAllUsers() {
+<b class="nc">&nbsp;        List&lt;User&gt; UserList = userRepository.findAll();</b>
+<b class="nc">&nbsp;        for (User user : UserList) {</b>
+<b class="nc">&nbsp;            userRepository.delete(user);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return  success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/delete/{token}&quot;)
+&nbsp;    ResponseEntity&lt;?&gt; deleteUser(@PathVariable(value=&quot;token&quot;) String token){
+<b class="nc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="nc">&nbsp;        if (user != null) {</b>
+<b class="nc">&nbsp;            userRepository.deleteById(user.getId());</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(success);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(failure);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getUser/{token}&quot;)
+&nbsp;    ResponseEntity&lt;?&gt; getCurrentUser123(@PathVariable(value=&quot;token&quot;) String token){
+<b class="nc">&nbsp;        User retUser = tokenStore.getUser(token);</b>
+<b class="nc">&nbsp;        if (retUser != null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(retUser);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(failure);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getUserByID/{userId}&quot;)
+&nbsp;    User getUserById(@PathVariable(&quot;userId&quot;) int userId){
+<b class="nc">&nbsp;        return userRepository.findById(userId);   </b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;getAllUsers&quot;)
+&nbsp;    List&lt;User&gt; getAllUsers(){
+<b class="fc">&nbsp;        return userRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

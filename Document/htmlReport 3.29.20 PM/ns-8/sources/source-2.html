@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ReportController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Reports</a>
+</div>
+
+<h1>Coverage Summary for Class: ReportController (code.Reports)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReportController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (5/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69.4%
+  </span>
+  <span class="absValue">
+    (25/36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Reports;
+&nbsp;
+&nbsp;import code.Users.Roles;
+&nbsp;import code.Users.TokenStore;
+&nbsp;import code.Users.User;
+&nbsp;import code.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpSession;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class ReportController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ReportRepository reportRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TokenStore tokenStore;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @PostMapping(&quot;/createReport/{token}&quot;)
+&nbsp;    public String createReport(@PathVariable String token, @RequestBody ReportRequest reportRequest) {
+<b class="fc">&nbsp;        User student = tokenStore.getUser(token);</b>
+<b class="fc">&nbsp;        if(student == null) {</b>
+<b class="nc">&nbsp;            return failure; // No user associated with the provided token</b>
+&nbsp;        }
+<b class="fc">&nbsp;        User teacher = userRepository.findById(reportRequest.getTeacherReportedID());</b>
+<b class="fc">&nbsp;        if (teacher != null) {</b>
+<b class="fc">&nbsp;            Report report = new Report(student, teacher, reportRequest.getTitle(), reportRequest.getDescription(), ReportStatus.ONGOING);</b>
+<b class="fc">&nbsp;            reportRepository.save(report);</b>
+<b class="fc">&nbsp;            return success;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return failure;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/updateReport/{id}&quot;)
+&nbsp;    public String updateReport(@PathVariable(&quot;id&quot;) int id) {
+<b class="fc">&nbsp;        Report currentReport = reportRepository.findReportById(id);</b>
+<b class="fc">&nbsp;        if(currentReport != null) {</b>
+<b class="fc">&nbsp;            currentReport.setStatus(ReportStatus.DONE);</b>
+<b class="fc">&nbsp;            reportRepository.save(currentReport);</b>
+<b class="fc">&nbsp;            return success;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return failure;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteAllReports/{token}&quot;)
+&nbsp;    public String deleteAllReports(@PathVariable String token) {
+<b class="fc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="fc">&nbsp;        if(user == null || !user.getRole().equals(Roles.UserRoles.ADMIN)) { // Assuming an ADMIN role check</b>
+<b class="fc">&nbsp;            return failure; // Not authorized or no user associated with the provided token</b>
+&nbsp;        }
+<b class="fc">&nbsp;        List&lt;Report&gt; allReports = reportRepository.findAll();</b>
+<b class="fc">&nbsp;        for (Report report : allReports) {</b>
+<b class="fc">&nbsp;            reportRepository.deleteById(report.getId());</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getReports/{studentId}&quot;)
+&nbsp;    public List&lt;Report&gt; getReportsByStudent(@PathVariable(&quot;studentId&quot;) int studentId) {
+<b class="nc">&nbsp;        User student = userRepository.findById(studentId);</b>
+<b class="nc">&nbsp;        if (student != null) {</b>
+<b class="nc">&nbsp;            return reportRepository.findReportsByStudentReporting(student);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return new ArrayList&lt;&gt;(); // return an empty list if the student does not exist</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getAllReports&quot;)
+&nbsp;    public List&lt;Report&gt; getAllReports(){
+<b class="fc">&nbsp;        List&lt;Report&gt; allReports = reportRepository.findAll();</b>
+<b class="fc">&nbsp;        return allReports;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteAllReports&quot;)
+&nbsp;    public String deleteAllReports(){
+<b class="nc">&nbsp;        if(!reportRepository.findAll().isEmpty()){</b>
+<b class="nc">&nbsp;            reportRepository.deleteAll();</b>
+<b class="nc">&nbsp;            return &quot;success&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return &quot;failure&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

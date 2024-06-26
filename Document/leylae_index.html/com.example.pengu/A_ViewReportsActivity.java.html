@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>A_ViewReportsActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.pengu</a> &gt; <span class="el_source">A_ViewReportsActivity.java</span></div><h1>A_ViewReportsActivity.java</h1><pre class="source lang-java linenums">package com.example.pengu;
+
+import android.os.Bundle;
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L23">public class A_ViewReportsActivity extends AppCompatActivity {</span>
+
+    private RecyclerView ongoingReportsView, doneReportsView;
+    private ReportAdptr ongoingAdptr;
+    private ReportAdpterAnother doneAdptr;
+
+    private List&lt;JSONObject&gt; ongoingReportList, doneReportList;
+    private VolleySingleton volleySingleton;
+    private RequestQueue requestQueue;
+<span class="nc" id="L32">    private String url = &quot;http://coms-309-037.class.las.iastate.edu:8080/getAllReports&quot;;</span>
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L36">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L37">        setContentView(R.layout.activity_view_all_reports);</span>
+
+
+<span class="nc" id="L40">        ongoingReportsView = findViewById(R.id.ongoingReportsRecyclerView);</span>
+<span class="nc" id="L41">        doneReportsView = findViewById(R.id.doneReportsRecyclerView);</span>
+
+<span class="nc" id="L43">        ongoingReportsView.setLayoutManager(new LinearLayoutManager(this));</span>
+<span class="nc" id="L44">        doneReportsView.setLayoutManager(new LinearLayoutManager(this));</span>
+
+        // Initialize VolleySingleton
+<span class="nc" id="L47">        volleySingleton = VolleySingleton.getInstance(this);</span>
+<span class="nc" id="L48">        requestQueue = volleySingleton.getRequestQueue();</span>
+
+        // Initialize the list to hold the teacher users
+<span class="nc" id="L51">        ongoingReportList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L52">        doneReportList = new ArrayList&lt;&gt;();</span>
+
+
+
+        // Make Volley GET request to fetch users from the backend API
+<span class="nc" id="L57">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L58">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // Parse the JSON response
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L63">                            Log.e(&quot;what is in here&quot;, response.toString());</span>
+                            try {
+<span class="nc" id="L65">                                JSONObject reportObject = response.getJSONObject(i);</span>
+<span class="nc" id="L66">                                String status = reportObject.getString(&quot;status&quot;);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                                if (&quot;ONGOING&quot;.equals(status)) {</span>
+<span class="nc" id="L68">                                    ongoingReportList.add(reportObject);</span>
+                                }
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                                else if (&quot;DONE&quot;.equals(status)) {</span>
+<span class="nc" id="L71">                                    doneReportList.add(reportObject);</span>
+
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                                }else if (&quot;DONE&quot;.equals(status)) {</span>
+<span class="nc" id="L74">                                    doneReportList.add(reportObject);</span>
+                                }
+                            }
+<span class="nc" id="L77">                            catch (JSONException e) {</span>
+<span class="nc" id="L78">                                e.printStackTrace();</span>
+<span class="nc" id="L79">                            }</span>
+
+<span class="nc" id="L81">                            ongoingAdptr = new ReportAdptr(A_ViewReportsActivity.this, ongoingReportList);</span>
+<span class="nc" id="L82">                            ongoingReportsView.setAdapter(ongoingAdptr);</span>
+
+<span class="nc" id="L84">                            doneAdptr = new ReportAdpterAnother(A_ViewReportsActivity.this, doneReportList);</span>
+<span class="nc" id="L85">                            doneReportsView.setAdapter(doneAdptr);</span>
+
+
+                        }
+
+<span class="nc" id="L90">                    }</span>
+                },
+<span class="nc" id="L92">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L95">                        Log.e(&quot;nvm got error&quot;, error.toString());</span>
+<span class="nc" id="L96">                        error.printStackTrace();</span>
+<span class="nc" id="L97">                    }</span>
+                });
+
+        // Add the request to the RequestQueue
+<span class="nc" id="L101">        volleySingleton.addToRequestQueue(jsonArrayRequest);</span>
+<span class="nc" id="L102">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.2</div></body></html>

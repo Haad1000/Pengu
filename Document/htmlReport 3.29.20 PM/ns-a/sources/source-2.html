@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SubjectController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Subject</a>
+</div>
+
+<h1>Coverage Summary for Class: SubjectController (code.Subject)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SubjectController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    67.6%
+  </span>
+  <span class="absValue">
+    (25/37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Subject;
+&nbsp;
+&nbsp;import code.Review_FINAL.ReviewRepository;
+&nbsp;import code.TeacherCourses.Teacher;
+&nbsp;import code.Users.TokenStore;
+&nbsp;import code.Users.User;
+&nbsp;import code.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import code.Users.Roles;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpSession;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class SubjectController {</b>
+&nbsp;    @Autowired
+&nbsp;    ReviewRepository reviewRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    SubjectRepository subjectRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TokenStore tokenStore;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @PostMapping(&quot;/createSubject/{token}&quot;)
+&nbsp;    public String createSubject(@PathVariable String token, @RequestBody SubjectRequest subjectRequest) {
+<b class="fc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="fc">&nbsp;        if (user != null &amp;&amp; user.getRole() == Roles.UserRoles.ADMIN) {</b>
+<b class="fc">&nbsp;            Subject newSubject = new Subject(subjectRequest.getSubjectName());</b>
+<b class="fc">&nbsp;            subjectRepository.save(newSubject);</b>
+<b class="fc">&nbsp;            return success;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteSubject/{subjectId}/{token}&quot;)
+&nbsp;    public String deleteSubject(@PathVariable int subjectId, @PathVariable String token) {
+<b class="fc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="fc">&nbsp;        if (user != null &amp;&amp; user.getRole() == Roles.UserRoles.ADMIN) {</b>
+<b class="fc">&nbsp;            subjectRepository.deleteSubjectBySubjectID(subjectId);</b>
+<b class="fc">&nbsp;            return success;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/updateSubject/{token}&quot;)
+&nbsp;    public String updateSubject(@PathVariable String token, @RequestBody SubjectRequest subjectRequest) {
+<b class="fc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="fc">&nbsp;        if (user != null &amp;&amp; user.getRole() == Roles.UserRoles.ADMIN) {</b>
+<b class="fc">&nbsp;            Subject currentSubject = subjectRepository.findBySubjectID(subjectRequest.getSubjectID());</b>
+<b class="fc">&nbsp;            if (currentSubject != null) {</b>
+<b class="fc">&nbsp;                currentSubject.setSubjectName(subjectRequest.getSubjectName());</b>
+<b class="fc">&nbsp;                subjectRepository.save(currentSubject);</b>
+<b class="fc">&nbsp;                return success;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return failure;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/printSubject&quot;)
+&nbsp;    public ArrayList&lt;Subject&gt; printSubject(){
+<b class="fc">&nbsp;        ArrayList&lt;Subject&gt; subjectList = new ArrayList&lt;Subject&gt;();</b>
+<b class="fc">&nbsp;        subjectList.addAll(subjectRepository.findAll());</b>
+<b class="fc">&nbsp;        return subjectList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteAllSubjects&quot;)
+&nbsp;    public String deleteAllSubjects(){
+<b class="fc">&nbsp;        if(!subjectRepository.findAll().isEmpty()){</b>
+<b class="fc">&nbsp;            subjectRepository.deleteAll();</b>
+<b class="fc">&nbsp;            return &quot;success&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return &quot;failure&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getTeachersBySubject/{subjectId}&quot;)
+&nbsp;    public List&lt;User&gt; getTeachersBySubject(@PathVariable(&quot;subjectId&quot;) int subjectId){
+<b class="nc">&nbsp;        Subject subject = subjectRepository.findBySubjectID(subjectId);</b>
+<b class="nc">&nbsp;        List&lt;User&gt; list = userRepository.findAll();</b>
+<b class="nc">&nbsp;        List&lt;User&gt; ret = new ArrayList&lt;User&gt;();</b>
+<b class="nc">&nbsp;        for(User t : list){</b>
+<b class="nc">&nbsp;            if(t.getId() == subject.getTeacher().getId()){</b>
+<b class="nc">&nbsp;                ret.add(t);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ret;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

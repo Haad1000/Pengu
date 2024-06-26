@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TeacherLogin">
+
+    <EditText
+        android:id="@+id/Textmail"
+        android:layout_width="214dp"
+        android:layout_height="50dp"
+        android:background="#C2B2DE"
+        android:ems="10"
+        android:hint="Your email"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.568" />
+
+    <EditText
+        android:id="@+id/Textpassword"
+        android:layout_width="214dp"
+        android:layout_height="50dp"
+        android:background="#C2B2DE"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.66" />
+
+    <Button
+        android:id="@+id/buttonn"
+        android:text="-"
+        android:layout_width="568dp"
+        android:layout_height="491dp"
+        android:layout_marginEnd="16dp"
+        android:rotation="-15"
+        android:rotationY="2"
+        android:translationY="-800px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/msgresponse"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Textpassword"
+        app:layout_constraintVertical_bias="0.342" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="127dp"
+        android:layout_height="67dp"
+        android:layout_marginBottom="104dp"
+        android:text="LogIn"
+        android:textColorHighlight="#8FCA49"
+        android:textColorLink="#FF9800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--    <Button-->
+    <!--        android:id="@+id/buttonGet"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="ButtonGet"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/TextMail"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.896"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintVertical_bias="0.82" />-->
+
+    <TextView
+        android:id="@+id/textViewOpenNewpage"
+        android:layout_width="84dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="164dp"
+        android:padding="18dp"
+        android:text="Sign Up"
+        android:textColor="#D3D3D3"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.917"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Textpassword" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="135dp"
+        android:layout_height="18dp"
+        android:text="Don't have an account?"
+        android:textColor="#D3D3D3"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textViewOpenNewpage"
+        app:layout_constraintHorizontal_bias="0.207"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/msgresponse"
+        app:layout_constraintVertical_bias="0.745" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Reviewcontroller</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Review_FINAL</a>
+</div>
+
+<h1>Coverage Summary for Class: Reviewcontroller (code.Review_FINAL)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Reviewcontroller</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    68.4%
+  </span>
+  <span class="absValue">
+    (26/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Review_FINAL;
+&nbsp;
+&nbsp;import code.Users.TokenStore;
+&nbsp;import code.Users.User;
+&nbsp;import code.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpSession;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class Reviewcontroller {</b>
+&nbsp;    @Autowired
+&nbsp;    ReviewRepository reviewRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TokenStore tokenStore; // Assuming you have this service
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @PostMapping(&quot;/createReview/{token}&quot;)
+&nbsp;    public String createReview(@PathVariable String token, @RequestBody ReviewRequest reviewRequest){
+<b class="fc">&nbsp;        User cUser = tokenStore.getUser(token);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (cUser == null) {</b>
+<b class="nc">&nbsp;            return failure; // User not found or invalid token</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User teacher1 = userRepository.findById(reviewRequest.getWrittenFor().getId());</b>
+<b class="fc">&nbsp;        if (teacher1 == null) {</b>
+<b class="nc">&nbsp;            return failure; // Teacher not found</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Review newReview = new Review(cUser, teacher1, reviewRequest.getActualReview());</b>
+<b class="fc">&nbsp;        reviewRepository.save(newReview);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;    private Review updatedReview;
+&nbsp;
+&nbsp;    @PutMapping(&quot;/updateReview/{token}&quot;)
+&nbsp;    public String updateReview(@PathVariable String token, @RequestBody ReviewRequest reviewRequest){
+<b class="fc">&nbsp;        User cUser = tokenStore.getUser(token);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (cUser == null) {</b>
+<b class="nc">&nbsp;            return failure; // User not found or invalid token</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Review updatedReview = reviewRepository.findReviewByWrittenById(cUser.getId());</b>
+<b class="fc">&nbsp;        if (updatedReview == null) {</b>
+<b class="nc">&nbsp;            return failure; // Review not found</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        updatedReview.setActualReview(reviewRequest.getActualReview());</b>
+<b class="fc">&nbsp;        reviewRepository.save(updatedReview);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;    private Review retVal;
+&nbsp;    @GetMapping(&quot;/printReview/{token}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; printReview(@PathVariable String token){
+<b class="nc">&nbsp;        User cUser = tokenStore.getUser(token);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (cUser == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(failure);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Review retVal = reviewRepository.findReviewByID(cUser.getId());</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(retVal != null ? retVal : failure);</b>
+&nbsp;    }
+&nbsp;    private Review currentReview;
+&nbsp;    private Review deletedReview;
+&nbsp;    @DeleteMapping(&quot;/deleteReview/{token}&quot;)
+&nbsp;    public String deleteReview(@PathVariable String token) {
+<b class="fc">&nbsp;        User cUser = tokenStore.getUser(token);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (cUser == null) {</b>
+<b class="nc">&nbsp;            return failure; // User not found or invalid token</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Review reviewToDelete = reviewRepository.findReviewByWrittenById(cUser.getId());</b>
+<b class="fc">&nbsp;        if (reviewToDelete == null) {</b>
+<b class="nc">&nbsp;            return failure; // Review not found</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        reviewRepository.delete(reviewToDelete);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteAllReviews&quot;)
+&nbsp;    public String deleteAllReviews(){
+<b class="fc">&nbsp;        if(!reviewRepository.findAll().isEmpty()){</b>
+<b class="fc">&nbsp;            reviewRepository.deleteAll();</b>
+<b class="fc">&nbsp;            return &quot;success&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return &quot;failure&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

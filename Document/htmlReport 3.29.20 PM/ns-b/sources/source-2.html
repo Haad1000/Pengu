@@ -1,0 +1,243 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TeacherController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.TeacherCourses</a>
+</div>
+
+<h1>Coverage Summary for Class: TeacherController (code.TeacherCourses)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TeacherController</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.1%
+  </span>
+  <span class="absValue">
+    (32/39)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">TeacherController$$EnhancerBySpringCGLIB$$761c4fbf</td>
+  </tr>
+  <tr>
+    <td class="name">TeacherController$$EnhancerBySpringCGLIB$$761c4fbf$$FastClassBySpringCGLIB$$c6eb55f9</td>
+  </tr>
+  <tr>
+    <td class="name">TeacherController$$FastClassBySpringCGLIB$$7af74687</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.1%
+  </span>
+  <span class="absValue">
+    (32/39)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.TeacherCourses;
+&nbsp;
+&nbsp;import code.Subject.Subject;
+&nbsp;import code.Subject.SubjectRepository;
+&nbsp;import code.Users.User;
+&nbsp;import code.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import javax.persistence.EntityNotFoundException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class TeacherController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    SubjectRepository subjectRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TeacherRepository teacherRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/subjects/{id}&quot;)
+&nbsp;    public List&lt;Subject&gt; addSubjectToTeachings(@PathVariable int id) {
+<b class="nc">&nbsp;       Teacher t =  teacherRepository.getOne(id);</b>
+<b class="nc">&nbsp;        return t.getTeacherCourses();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/subjects/{teach}/{subId}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; updateTeacherSubjects(@PathVariable int teach, @PathVariable int subId) {
+<b class="fc">&nbsp;        Teacher t =  teacherRepository.getOne(teach);</b>
+&nbsp;
+<b class="fc">&nbsp;            Subject s = subjectRepository.findBySubjectID(subId);</b>
+&nbsp;
+<b class="fc">&nbsp;            t.getTeacherCourses().add(s);</b>
+<b class="fc">&nbsp;            teacherRepository.save(t);</b>
+&nbsp;
+<b class="fc">&nbsp;            s.setTeacher(t);</b>
+<b class="fc">&nbsp;            subjectRepository.save(s);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;            return ResponseEntity.ok(&quot;Teacher&#39;s Subjects were successfully updated&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/addTeachings&quot;)
+&nbsp;    @Transactional
+&nbsp;    public ResponseEntity&lt;String&gt; addTeachingSubject(@RequestBody TeacherRequest teacherRequest) {
+&nbsp;        // Retrieve the subject details from the request
+<b class="fc">&nbsp;        TeacherRequest.SubjectRequest subjectRequest = teacherRequest.getSubjectRequest();</b>
+&nbsp;
+&nbsp;        // Find the subject based on the ID provided in the request
+<b class="fc">&nbsp;        Optional&lt;Subject&gt; subjectOptional = subjectRepository.findById(subjectRequest.getSubjectID());</b>
+<b class="fc">&nbsp;        if (subjectOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Subject does not exist.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Subject subject = subjectOptional.get();</b>
+&nbsp;
+&nbsp;        // Find the teacher by ID
+<b class="fc">&nbsp;        Optional&lt;Teacher&gt; teacherOptional = teacherRepository.findById(teacherRequest.getId());</b>
+<b class="fc">&nbsp;        if (teacherOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Teacher does not exist.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Teacher teacher = teacherOptional.get();</b>
+&nbsp;
+&nbsp;        // Check if the subject is already in the teacher&#39;s list
+<b class="fc">&nbsp;        if (teacher.getTeacherCourses().contains(subject)) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Subject is already assigned to the teacher.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Add the subject to the teacher&#39;s list
+<b class="fc">&nbsp;        teacher.getTeacherCourses().add(subject);</b>
+&nbsp;        // Set the teacher to the subject
+<b class="fc">&nbsp;        subject.setTeacher(teacher);</b>
+&nbsp;
+&nbsp;        // Save the teacher entity to commit the transaction
+<b class="fc">&nbsp;        teacherRepository.save(teacher);</b>
+&nbsp;        // Save the subject entity with the new teacher assignment
+<b class="fc">&nbsp;        subjectRepository.save(subject);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;Subject added successfully to the teacher&#39;s courses.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/delete/{teach}/{subId}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deletingTeacherCourses(@PathVariable int teach, @PathVariable int subId){
+<b class="fc">&nbsp;        Teacher t = teacherRepository.getOne(teach);</b>
+<b class="fc">&nbsp;        Subject s = subjectRepository.findBySubjectID(subId);</b>
+&nbsp;
+&nbsp;        // Example condition that could be tested as false
+<b class="fc">&nbsp;        if (s.getTeacher() != null &amp;&amp; s.getTeacher().getId() != teach) {</b>
+&nbsp;            // This block can be used to return an error if the subject&#39;s assigned teacher is not the one specified.
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Subject is not assigned to this teacher.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        t.getTeacherCourses().remove(s);</b>
+<b class="fc">&nbsp;        teacherRepository.save(t);</b>
+<b class="fc">&nbsp;        s.setTeacher(null);</b>
+<b class="fc">&nbsp;        subjectRepository.save(s);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;Subject was successfully deleted from teacher&#39;s course list&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteAllTeachers&quot;)
+&nbsp;    public String deleteAllTeachers(){
+<b class="fc">&nbsp;        if(!teacherRepository.findAll().isEmpty()){</b>
+<b class="fc">&nbsp;            teacherRepository.deleteAll();</b>
+<b class="fc">&nbsp;            return &quot;success&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return &quot;failure&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

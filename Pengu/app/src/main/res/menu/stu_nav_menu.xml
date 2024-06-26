@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/stuDashboard"
+        android:icon="@drawable/baseline_home_24"
+        android:title="DashBoard"
+        />
+    <item android:id="@+id/stuSchedule"
+        android:icon="@drawable/baseline_calendar_month_24"
+        android:title="Inbox"
+        />
+    <item android:id="@+id/stuInbox"
+        android:icon="@drawable/send_message"
+        android:title="Schedule"
+        />
+    <item android:id="@+id/stuProfile"
+        android:icon="@drawable/profile_circle"
+        android:title="Profile"
+        />
+</menu>

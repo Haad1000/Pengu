@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Report</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Reports</a>
+</div>
+
+<h1>Coverage Summary for Class: Report (code.Reports)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Report</td>
+<td class="coverageStat">
+  <span class="percent">
+    64.3%
+  </span>
+  <span class="absValue">
+    (9/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.7%
+  </span>
+  <span class="absValue">
+    (14/19)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$Eb7kzUWg</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$ghlKD2bo</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$h3gAU8e8</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$HI0VIH0b</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$mfLZXD1A</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$Mj33Jep3</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$prhvDh5H</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$QC7m6S2k</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$wvsoz5Hl</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$X4XUMe5y</td>
+  </tr>
+  <tr>
+    <td class="name">Report$HibernateProxy$XYg6MXsM</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    64.3%
+  </span>
+  <span class="absValue">
+    (9/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.7%
+  </span>
+  <span class="absValue">
+    (14/19)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Reports;
+&nbsp;
+&nbsp;import code.Users.User;
+&nbsp;
+&nbsp;import javax.persistence.*;
+&nbsp;
+&nbsp;@Entity
+&nbsp;public class Report {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private int id;
+&nbsp;
+&nbsp;    @OneToOne
+&nbsp;    private User studentReporting;
+&nbsp;
+&nbsp;    @OneToOne
+&nbsp;    private User teacherReported;
+&nbsp;
+&nbsp;    private String title;
+&nbsp;
+&nbsp;    private String description;
+&nbsp;
+&nbsp;    private ReportStatus status;
+&nbsp;
+<b class="fc">&nbsp;    public Report(){}</b>
+&nbsp;
+<b class="fc">&nbsp;    public Report(User studentReporting, User teacherReported, String title, String description, ReportStatus status) {</b>
+<b class="fc">&nbsp;        this.studentReporting = studentReporting;</b>
+<b class="fc">&nbsp;        this.teacherReported = teacherReported;</b>
+<b class="fc">&nbsp;        this.title = title;</b>
+<b class="fc">&nbsp;        this.description = description;</b>
+<b class="fc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getStudentReporting() {
+<b class="fc">&nbsp;        return studentReporting;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStudentReporting(User studentReporting) {
+<b class="nc">&nbsp;        this.studentReporting = studentReporting;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getTeacherReported() {
+<b class="fc">&nbsp;        return teacherReported;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTeacherReported(User teacherReported) {
+<b class="nc">&nbsp;        this.teacherReported = teacherReported;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getTitle() {
+<b class="fc">&nbsp;        return title;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTitle(String title) {
+<b class="nc">&nbsp;        this.title = title;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getDescription() {
+<b class="fc">&nbsp;        return description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDescription(String description) {
+<b class="nc">&nbsp;        this.description = description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ReportStatus getStatus() {
+<b class="fc">&nbsp;        return status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStatus(ReportStatus status) {
+<b class="fc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(int id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

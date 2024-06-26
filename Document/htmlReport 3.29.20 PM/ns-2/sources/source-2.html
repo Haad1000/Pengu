@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AchievementController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Achievements</a>
+</div>
+
+<h1>Coverage Summary for Class: AchievementController (code.Achievements)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AchievementController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70%
+  </span>
+  <span class="absValue">
+    (28/40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Achievements;
+&nbsp;
+&nbsp;
+&nbsp;import code.Users.Roles;
+&nbsp;import code.Users.TokenStore;
+&nbsp;import code.Users.User;
+&nbsp;import code.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class AchievementController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TokenStore tokenStore;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    AchievementRepository achievementRepository;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    // Placeholder methods
+&nbsp;
+&nbsp;    @PostMapping(&quot;/addAch/{token}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; addAchievement(@PathVariable(&quot;token&quot;) String token, @RequestBody AchievementRequest achievementRequest){
+<b class="fc">&nbsp;        User admin = tokenStore.getUser(token);</b>
+&nbsp;        // Null check for the &#39;User&#39; object
+<b class="fc">&nbsp;    if (admin == null) {</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Access denied: Invalid token.&quot;);</b>
+&nbsp;    }
+<b class="fc">&nbsp;    if (!admin.getRole().equals(Roles.UserRoles.ADMIN)) {</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Access denied.&quot;);</b>
+&nbsp;    }
+<b class="fc">&nbsp;        if(achievementRequest.getTitle() == null || achievementRequest.getDesc() == null){</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Cannot create an empty achievement.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Achievement newAchievement = new Achievement(achievementRequest.getTitle(), achievementRequest.getDesc());</b>
+<b class="fc">&nbsp;        achievementRepository.save(newAchievement);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;Achievement created successfully.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/updateAch/{token}/{achId}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; updateAchievement(@PathVariable(&quot;token&quot;) String token, @PathVariable(&quot;achId&quot;) int achId, @RequestBody AchievementRequest achievementRequest) {
+<b class="fc">&nbsp;        User admin = tokenStore.getUser(token);</b>
+&nbsp;
+&nbsp;        // Null check for the &#39;User&#39; object
+<b class="fc">&nbsp;        if (admin == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Access denied: Invalid token.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (!admin.getRole().equals(Roles.UserRoles.ADMIN)) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Access denied.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Achievement existingAchievement = achievementRepository.findById(achId);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (existingAchievement == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Achievement not found.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (achievementRequest.getTitle() == null || achievementRequest.getDesc() == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Cannot update an achievement with missing fields.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        existingAchievement.setTitle(achievementRequest.getTitle());</b>
+<b class="fc">&nbsp;        existingAchievement.setDesc(achievementRequest.getDesc());</b>
+&nbsp;
+<b class="fc">&nbsp;        achievementRepository.save(existingAchievement);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;Achievement updated successfully.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/removeAch/{token}/{achId}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; removeAchievement(@PathVariable(&quot;token&quot;) String token, @PathVariable(&quot;achId&quot;) int achId){
+<b class="fc">&nbsp;        User admin = tokenStore.getUser(token);</b>
+&nbsp;        // Null check for the &#39;User&#39; object
+<b class="fc">&nbsp;        if (admin == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Access denied: Invalid token.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!admin.getRole().equals(Roles.UserRoles.ADMIN)) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(&quot;Access denied.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Achievement achievement = achievementRepository.findById(achId);</b>
+<b class="fc">&nbsp;        if (achievement == null){</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Achievement not found.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        achievementRepository.delete(achievement);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;Achievement removed successfully.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getAllAch&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAchievements() {
+<b class="nc">&nbsp;        List&lt;Achievement&gt; achievementList = achievementRepository.findAll();</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(achievementList);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getAchById/{achId}&quot;)
+&nbsp;    public Achievement getAchById(@PathVariable(&quot;achId&quot;) int achId){
+<b class="fc">&nbsp;        return achievementRepository.findById(achId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

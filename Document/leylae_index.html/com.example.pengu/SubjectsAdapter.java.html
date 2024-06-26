@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SubjectsAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.pengu</a> &gt; <span class="el_source">SubjectsAdapter.java</span></div><h1>SubjectsAdapter.java</h1><pre class="source lang-java linenums">package com.example.pengu;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.ImageView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.List;
+import android.util.Log;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.w3c.dom.Text;
+import android.util.Log;
+
+// If you're using Volley for network requests
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import com.android.volley.Response;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+public class SubjectsAdapter extends RecyclerView.Adapter&lt;RecyclerView.ViewHolder&gt; {
+    private static final int VIEW_TYPE_ITEM = 0;
+    private static final int VIEW_TYPE_ADD = 1;
+    private List&lt;Subjects&gt; subjectsList;
+    private actualTeacherProfile activity;
+
+<span class="fc" id="L46">    public SubjectsAdapter(List&lt;Subjects&gt; subjectsList, actualTeacherProfile activity) {</span>
+<span class="fc" id="L47">        this.subjectsList = subjectsList;</span>
+<span class="fc" id="L48">        this.activity = activity;</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public int getItemViewType(int position) {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        return (position == subjectsList.size()) ? VIEW_TYPE_ADD : VIEW_TYPE_ITEM;</span>
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (viewType == VIEW_TYPE_ADD) {</span>
+<span class="fc" id="L59">            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.subject_add_item, parent, false);</span>
+<span class="fc" id="L60">            return new AddViewHolder(view);</span>
+        } else {
+<span class="fc" id="L62">            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.subject_item, parent, false);</span>
+<span class="fc" id="L63">            return new ViewHolder(view);</span>
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (holder instanceof ViewHolder) {</span>
+<span class="fc" id="L70">            Subjects subject = subjectsList.get(position);</span>
+<span class="fc" id="L71">            ((ViewHolder) holder).bind(subject);</span>
+        }
+
+        // No binding needed for AddViewHolder
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="fc" id="L79">        return subjectsList.size() + 1; // +1 for the add button</span>
+    }
+//////////////////////////////////////////////////////
+public class AddViewHolder extends RecyclerView.ViewHolder {
+<span class="fc" id="L83">    public AddViewHolder(View itemView) {</span>
+<span class="fc" id="L84">        super(itemView);</span>
+<span class="pc" id="L85">        itemView.setOnClickListener(view -&gt; showBottomSheetDialog(view.getContext()));</span>
+<span class="fc" id="L86">    }</span>
+
+    private void showBottomSheetDialog(Context context) {
+<span class="nc" id="L89">        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);</span>
+<span class="nc" id="L90">        View bottomSheetView = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_subjects, null);</span>
+<span class="nc" id="L91">        RecyclerView subjectsListRecyclerView = bottomSheetView.findViewById(R.id.subjectsListRecyclerView);</span>
+<span class="nc" id="L92">        subjectsListRecyclerView.setLayoutManager(new LinearLayoutManager(context));</span>
+
+<span class="nc" id="L94">        BottomSheetSubjectsAdapter bottomSheetAdapter = new BottomSheetSubjectsAdapter(subjectsList, context);</span>
+<span class="nc" id="L95">        subjectsListRecyclerView.setAdapter(bottomSheetAdapter);</span>
+<span class="nc" id="L96">        bottomSheetAdapter.fetchSubjects(context);</span>
+
+<span class="nc" id="L98">        bottomSheetDialog.setContentView(bottomSheetView);</span>
+<span class="nc" id="L99">        bottomSheetDialog.show();</span>
+<span class="nc" id="L100">    }</span>
+}
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView subjectTextView;
+        private final ImageView deleteImageView;
+
+<span class="fc" id="L109">        public ViewHolder(View itemView) {</span>
+<span class="fc" id="L110">            super(itemView);</span>
+<span class="fc" id="L111">            subjectTextView = itemView.findViewById(R.id.subjectNameTextView);</span>
+<span class="fc" id="L112">            deleteImageView = itemView.findViewById(R.id.deleteButton);</span>
+<span class="fc" id="L113">            deleteImageView.setOnClickListener(view -&gt; {</span>
+<span class="nc" id="L114">                int position = getAdapterPosition();</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                if (position != RecyclerView.NO_POSITION) {</span>
+<span class="nc" id="L116">                    int subjectId = subjectsList.get(position).getSubjectID();</span>
+<span class="nc" id="L117">                    activity.deleteSubject(subjectId, position);</span>
+                }
+<span class="nc" id="L119">            });</span>
+<span class="fc" id="L120">        }</span>
+
+        public void bind(Subjects subject) {
+<span class="fc" id="L123">            subjectTextView.setText(subject.getSubjectName());</span>
+<span class="fc" id="L124">        }</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.2</div></body></html>

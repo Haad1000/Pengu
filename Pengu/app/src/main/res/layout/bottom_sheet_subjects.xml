@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/selectASubject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Select a Subject"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/subjectsListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"/>
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/subjectsRecyclerView"-->
+<!--        android:layout_width="409dp"-->
+<!--        android:layout_height="390dp"-->
+<!--        android:orientation="vertical"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/aboutMeBox"-->
+<!--        app:layout_constraintVertical_bias="1.0"-->
+<!--        app:spanCount="2" />-->
+
+</LinearLayout>

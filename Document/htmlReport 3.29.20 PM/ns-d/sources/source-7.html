@@ -1,0 +1,258 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > User</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: User (code.Users)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">User</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.7%
+  </span>
+  <span class="absValue">
+    (14/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79.2%
+  </span>
+  <span class="absValue">
+    (19/24)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">User$HibernateProxy$1JOkobL8</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$8fzitZg0</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$dHw1VqwB</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$Fna1H5no</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$FZbaDazD</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$gYuVRZsZ</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$hl81IVn4</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$LlRgezdw</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$sO8TlpIU</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$sZ6baGij</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$uuQJ8Arm</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    73.7%
+  </span>
+  <span class="absValue">
+    (14/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79.2%
+  </span>
+  <span class="absValue">
+    (19/24)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Users;
+&nbsp;
+&nbsp;import code.Achievements.Achievement;
+&nbsp;import code.Achievements.AchievementRepository;
+&nbsp;import org.hamcrest.core.Is;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;
+&nbsp;import javax.persistence.*;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+&nbsp;@DiscriminatorColumn(name = &quot;dtype&quot;, discriminatorType = DiscriminatorType.STRING)
+&nbsp;public class User {
+&nbsp;
+&nbsp;     /* 
+&nbsp;     * The annotation @ID marks the field below as the primary key for the table created by springboot
+&nbsp;     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
+&nbsp;     */
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private int id;
+&nbsp;    private String name;
+&nbsp;    private String emailId;
+&nbsp;    private String Password;
+&nbsp;    private Roles.UserRoles role;
+&nbsp;    private IsActive isActive;
+&nbsp;    private int numberOfBookings;
+&nbsp;    @ElementCollection(fetch = FetchType.EAGER)
+&nbsp;    @CollectionTable(name = &quot;user_achievements&quot;, joinColumns = @JoinColumn(name = &quot;user_id&quot;))
+&nbsp;    @Column(name = &quot;achievements&quot;)
+&nbsp;    private List&lt;Integer&gt; achievements;
+&nbsp;
+<b class="fc">&nbsp;    public User(String name, String emailId, String Password, Roles.UserRoles role, IsActive isActive) {</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.emailId = emailId;</b>
+<b class="fc">&nbsp;        this.Password = Password;</b>
+<b class="fc">&nbsp;        this.role = role;</b>
+<b class="fc">&nbsp;        this.isActive = isActive;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public User() {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // =============================== Getters and Setters for each field ================================== //
+&nbsp;
+&nbsp;    public int getId(){
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(int id){
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getName(){
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name){
+<b class="nc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmailId(){
+<b class="fc">&nbsp;        return emailId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmailId(String emailId){
+<b class="fc">&nbsp;        this.emailId = emailId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPassword(){
+<b class="fc">&nbsp;        return Password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPassword(String emailId){
+<b class="nc">&nbsp;        this.Password = emailId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Roles.UserRoles getRole() {
+<b class="fc">&nbsp;        return role;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRole(Roles.UserRoles role) {
+<b class="fc">&nbsp;        this.role = role;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setImagePath(String filePath) {
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    public IsActive getIsActive() {
+<b class="fc">&nbsp;        return isActive;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIsActive(IsActive isActive) {
+<b class="fc">&nbsp;        this.isActive = isActive;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Integer&gt; getAchievements() {
+<b class="fc">&nbsp;        return achievements;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addAchievement(int num) {
+<b class="nc">&nbsp;        achievements.add(num);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getNumberOfBookings() {
+<b class="fc">&nbsp;        return numberOfBookings;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNumberOfBookings(int numberOfBookings) {
+<b class="nc">&nbsp;        this.numberOfBookings = numberOfBookings;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

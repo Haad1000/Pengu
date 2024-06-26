@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StudentProfileEdit">
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/student_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/stu_nav_menu"/>
+
+
+    <ImageButton
+        android:id="@+id/goBackToStuProfile"
+        android:layout_width="64dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="328dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/go_back" />
+
+    <EditText
+        android:id="@+id/editUserBio"
+        android:layout_width="383dp"
+        android:layout_height="112dp"
+        android:hint="Bio"
+        app:layout_constraintBottom_toBottomOf="@+id/student_navbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editStuPfp"
+        app:layout_constraintVertical_bias="0.118" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/editStuPfp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/profile_circle"
+        app:civ_border_color="@color/black"
+        app:civ_border_width="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/student_navbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.168" />
+
+    <Button
+        android:id="@+id/updateProfileBtn"
+        android:layout_width="217dp"
+        android:layout_height="46dp"
+        android:text="Update"
+        app:layout_constraintBottom_toBottomOf="@+id/student_navbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editUserBio"
+        app:layout_constraintVertical_bias="0.339" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

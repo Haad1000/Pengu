@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SlotController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.TeacherSlots</a>
+</div>
+
+<h1>Coverage Summary for Class: SlotController (code.TeacherSlots)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SlotController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    39.8%
+  </span>
+  <span class="absValue">
+    (35/88)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.TeacherSlots;
+&nbsp;
+&nbsp;import code.TeacherCourses.Teacher;
+&nbsp;import code.Users.TokenStore;
+&nbsp;import code.Users.User;
+&nbsp;import code.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.LocalTime;
+&nbsp;import java.time.format.DateTimeParseException;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class SlotController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TokenStore tokenStore;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    SlotRepository slotRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TimeSlotRangeRepository timeSlotRangeRepository;
+&nbsp;
+<b class="fc">&nbsp;    private List&lt;TimeSlotRange&gt; availableS = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    @PostMapping(&quot;/slots/open/{token}/{date}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; openSlots(
+&nbsp;            @RequestBody List&lt;TimeSlotRange&gt; slotRanges,
+&nbsp;            @PathVariable(&quot;token&quot;) String token,
+&nbsp;            @PathVariable(&quot;date&quot;) String dateString) {
+&nbsp;
+&nbsp;        // Parse the date string to a LocalDate object
+&nbsp;        LocalDate date;
+&nbsp;        try {
+<b class="fc">&nbsp;            date = LocalDate.parse(dateString);</b>
+<b class="nc">&nbsp;        } catch (DateTimeParseException e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Invalid date format. Please use YYYY-MM-DD.&quot;);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Authenticate the teacher using the token
+<b class="fc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="fc">&nbsp;        if (!(user instanceof Teacher)) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Invalid token or user not authorized.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Teacher teacher = (Teacher) user;</b>
+&nbsp;
+&nbsp;        // Create a new Slot instance and set the date
+<b class="fc">&nbsp;        Slot slot = new Slot();</b>
+<b class="fc">&nbsp;        slot.setDate(date);</b>
+&nbsp;
+&nbsp;        // Adjust each TimeSlotRange, setting the teacher and associating it with the Slot
+<b class="fc">&nbsp;        for (TimeSlotRange timeSlotRange : slotRanges) {</b>
+<b class="fc">&nbsp;            timeSlotRange.setTeacher(teacher); // Set the teacher in the TimeSlotRange</b>
+<b class="fc">&nbsp;            timeSlotRange.setSlot(slot);       // Associate each TimeSlotRange with the Slot</b>
+<b class="fc">&nbsp;            slot.getAvailableSlots().add(timeSlotRange); // Add each TimeSlotRange to the Slot</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Save the slot instance with associated time slot ranges
+<b class="fc">&nbsp;        slotRepository.save(slot);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;Time slots opened successfully.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/slots/update/{slotId}/{timeSlotRangeId}/{token}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; updateSlotAvailability(
+&nbsp;            @PathVariable Integer slotId,
+&nbsp;            @PathVariable Long timeSlotRangeId,
+&nbsp;            @PathVariable String token) {
+&nbsp;
+&nbsp;        // ... authentication logic ...
+&nbsp;
+&nbsp;        // Find the slot with the provided ID
+<b class="fc">&nbsp;        Optional&lt;Slot&gt; slotOptional = slotRepository.findById(slotId);</b>
+<b class="fc">&nbsp;        if (slotOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;Slot not found.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Slot slot = slotOptional.get();</b>
+<b class="fc">&nbsp;        boolean updated = false;</b>
+&nbsp;
+&nbsp;        // Iterate through the time slot ranges within the slot
+<b class="fc">&nbsp;        for (TimeSlotRange range : slot.getAvailableSlots()) {</b>
+&nbsp;            // Check if the range&#39;s ID matches the path variable &#39;timeSlotRangeId&#39;
+<b class="fc">&nbsp;            if (range.getId().equals(timeSlotRangeId)) {</b>
+&nbsp;                // Check current availability and update if needed
+<b class="fc">&nbsp;                if (!range.isAvailable()) {</b>
+<b class="fc">&nbsp;                    range.setAvailable(true); // Make the specific time slot available</b>
+<b class="fc">&nbsp;                    updated = true;</b>
+&nbsp;                }
+&nbsp;                // Break after updating the found range
+&nbsp;                break;
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Save the entire slot along with its updated time slot range
+<b class="fc">&nbsp;        if (updated) {</b>
+<b class="fc">&nbsp;            slotRepository.save(slot); // This will persist changes to the database</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(&quot;Time slot availability updated and added to the available slots successfully.&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;Time slot range not found within the specified slot.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/slots/available/{teacherId}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getAvailableSlots(@PathVariable(&quot;teacherId&quot;) int teacherId) {
+<b class="fc">&nbsp;        User teacher = userRepository.findById(teacherId);</b>
+<b class="fc">&nbsp;        if (teacher == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();  // Return not found if the teacher doesn&#39;t exist</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;TimeSlotRange&gt; timeSlotRanges = timeSlotRangeRepository.findAll();</b>
+<b class="fc">&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; slotDetails = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (TimeSlotRange timeSlot : timeSlotRanges) {</b>
+<b class="nc">&nbsp;            if (timeSlot.getTeacher().equals(teacher) &amp;&amp; timeSlot.isAvailable()) {</b>
+<b class="nc">&nbsp;                Map&lt;String, Object&gt; details = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;                details.put(&quot;slotId&quot;, timeSlot.getSlot().getId());</b>
+<b class="nc">&nbsp;                details.put(&quot;date&quot;, timeSlot.getSlot().getDate());</b>
+<b class="nc">&nbsp;                details.put(&quot;startTime&quot;, timeSlot.getStartTime());</b>
+<b class="nc">&nbsp;                details.put(&quot;endTime&quot;, timeSlot.getEndTime());</b>
+<b class="nc">&nbsp;                details.put(&quot;timeSlotId&quot;, timeSlot.getId());</b>
+<b class="nc">&nbsp;                slotDetails.add(details);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        if (slotDetails.isEmpty()) {</b>
+<b class="fc">&nbsp;            return ResponseEntity.noContent().build();  // Return no content if there are no available slots</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(slotDetails);  // Return the list of slot details</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/slots/allByDate/{teacherId}/{dayId}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getAllSlotsByDate(@PathVariable(&quot;teacherId&quot;) int teacherId, @PathVariable(&quot;dayId&quot;) int dayId) {
+<b class="nc">&nbsp;        User teacher = userRepository.findById(teacherId);</b>
+<b class="nc">&nbsp;        if (teacher == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();  // Return not found if the teacher doesn&#39;t exist</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        List&lt;TimeSlotRange&gt; timeSlotRanges = timeSlotRangeRepository.findAll();</b>
+<b class="nc">&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; slotDetails = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (TimeSlotRange timeSlot : timeSlotRanges) {</b>
+<b class="nc">&nbsp;            if (timeSlot.getTeacher().equals(teacher) &amp;&amp; timeSlot.getSlot().getId() == dayId) {</b>
+<b class="nc">&nbsp;                Map&lt;String, Object&gt; details = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;                details.put(&quot;slotId&quot;, timeSlot.getSlot().getId());</b>
+<b class="nc">&nbsp;                details.put(&quot;date&quot;, timeSlot.getSlot().getDate());</b>
+<b class="nc">&nbsp;                details.put(&quot;startTime&quot;, timeSlot.getStartTime());</b>
+<b class="nc">&nbsp;                details.put(&quot;endTime&quot;, timeSlot.getEndTime());</b>
+<b class="nc">&nbsp;                details.put(&quot;timeSlotId&quot;, timeSlot.getId());</b>
+<b class="nc">&nbsp;                slotDetails.add(details);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        if (slotDetails.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.noContent().build();  // Return no content if there are no slots for the teacher</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(slotDetails);  // Return the list of slot details</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/slots/all/{teacherId}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getAllSlots(@PathVariable(&quot;teacherId&quot;) int teacherId) {
+<b class="nc">&nbsp;        User teacher = userRepository.findById(teacherId);</b>
+<b class="nc">&nbsp;        if (teacher == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();  // Return not found if the teacher doesn&#39;t exist</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        List&lt;TimeSlotRange&gt; timeSlotRanges = timeSlotRangeRepository.findAll();</b>
+<b class="nc">&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; slotDetails = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (TimeSlotRange timeSlot : timeSlotRanges) {</b>
+<b class="nc">&nbsp;            if (timeSlot.getTeacher().equals(teacher)) {</b>
+<b class="nc">&nbsp;                Map&lt;String, Object&gt; details = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;                details.put(&quot;slotId&quot;, timeSlot.getSlot().getId());</b>
+<b class="nc">&nbsp;                details.put(&quot;date&quot;, timeSlot.getSlot().getDate());</b>
+<b class="nc">&nbsp;                details.put(&quot;startTime&quot;, timeSlot.getStartTime());</b>
+<b class="nc">&nbsp;                details.put(&quot;endTime&quot;, timeSlot.getEndTime());</b>
+<b class="nc">&nbsp;                details.put(&quot;timeSlotId&quot;, timeSlot.getId());</b>
+<b class="nc">&nbsp;                slotDetails.add(details);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        if (slotDetails.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.noContent().build();  // Return no content if there are no slots for the teacher</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(slotDetails);  // Return the list of slot details</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

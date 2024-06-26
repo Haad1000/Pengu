@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/subjectNameTextView"
+        android:layout_width="224dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="128dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:text="Subject Name"
+        android:textSize="16sp"
+    />
+
+    <ImageView
+        android:id="@+id/editSubjectImageView"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="40dp"
+        android:clickable="true"
+        android:contentDescription="to edit"
+        android:focusable="true"
+        android:padding="8dp"
+        android:src="@drawable/edit_subject" />
+
+    <ImageView
+        android:id="@+id/deleteSubjectImageView"
+        android:layout_width="52dp"
+        android:layout_height="57dp"
+        android:clickable="true"
+        android:contentDescription="to delete"
+        android:focusable="true"
+        android:padding="8dp"
+        android:src="@drawable/delete_subject" />
+    <!--    android:contentDescription="@string/edit_subject"-->
+
+</LinearLayout>

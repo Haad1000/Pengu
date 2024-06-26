@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="13dp"
+    android:background="@drawable/ach_user_border">
+
+    <LinearLayout
+        android:id="@+id/blackPart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/item_test_part_black"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/subjName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Subject Name"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/dateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Date, Time"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_bright" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/whitePart"
+        android:layout_below="@+id/blackPart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="20dp">
+
+        <TextView
+            android:id="@+id/startTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Start Time"
+            android:textColor="@color/grey"/>
+
+        <TextView
+            android:id="@+id/teacherName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Student Name"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+</RelativeLayout>

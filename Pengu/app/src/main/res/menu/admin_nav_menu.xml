@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/admSubjects"
+        android:icon="@drawable/baseline_folder_24"
+        android:title="Subjects"
+        />
+    <item android:id="@+id/admBooking"
+        android:icon="@drawable/baseline_edit_calendar_24"
+        android:title="Booking"
+        />
+    <item android:id="@+id/admReport"
+        android:icon="@drawable/baseline_auto_awesome_24"
+        android:title="Report"
+        />
+    <item android:id="@+id/admUsers"
+        android:icon="@drawable/baseline_perm_contact_calendar_24"
+        android:title="Users"
+        />
+</menu>

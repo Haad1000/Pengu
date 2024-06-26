@@ -1,0 +1,17 @@
+<!-- res/layout/dialog_achievement_description.xml -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background"
+    android:elevation="8dp"
+    android:padding="16dp">
+
+    <TextView
+    android:id="@+id/achievementDescription"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Achievement Description"
+    android:textSize="16sp"
+    android:textColor="#000000" />
+</RelativeLayout>

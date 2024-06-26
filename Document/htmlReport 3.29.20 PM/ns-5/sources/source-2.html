@@ -1,0 +1,269 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BookingController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Booking</a>
+</div>
+
+<h1>Coverage Summary for Class: BookingController (code.Booking)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BookingController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (4/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    23.3%
+  </span>
+  <span class="absValue">
+    (14/60)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Booking;
+&nbsp;
+&nbsp;import code.Achievements.AchievementRepository;
+&nbsp;import code.Subject.Subject;
+&nbsp;import code.Subject.SubjectRepository;
+&nbsp;import code.Users.TokenStore;
+&nbsp;import code.Users.User;
+&nbsp;import code.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class BookingController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    BookingRepository bookingRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    SubjectRepository subjectRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    AchievementRepository achievementRepository;
+&nbsp;    
+&nbsp;    @Autowired
+&nbsp;    TokenStore tokenStore;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @PostMapping(&quot;/createBooking/{token}&quot;)
+&nbsp;    public String createBooking(@RequestBody BookingRequest bookingRequest) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Optional&lt;User&gt; teacher = Optional.ofNullable(userRepository.findById(bookingRequest.getTeacher().getId()));</b>
+<b class="nc">&nbsp;            Optional&lt;User&gt; student = Optional.ofNullable(userRepository.findById(bookingRequest.getStudent().getId()));</b>
+<b class="nc">&nbsp;            Optional&lt;Subject&gt; subject = subjectRepository.findById(bookingRequest.getSubject().getSubjectID());</b>
+&nbsp;
+<b class="nc">&nbsp;            if (teacher.isEmpty() || student.isEmpty() || subject.isEmpty()) {</b>
+<b class="nc">&nbsp;                return failure;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Booking newBooking = new Booking(subject.get(), teacher.get(), student.get(), bookingRequest.getDate(), bookingRequest.getStartTime(), bookingRequest.getEndTime());</b>
+<b class="nc">&nbsp;            bookingRepository.save(newBooking);</b>
+&nbsp;
+&nbsp;            // Achievement
+<b class="nc">&nbsp;            User stdnt = userRepository.findById(bookingRequest.getStudent().getId());</b>
+<b class="nc">&nbsp;            stdnt.setNumberOfBookings(stdnt.getNumberOfBookings() + 1);</b>
+<b class="nc">&nbsp;            if(stdnt.getNumberOfBookings() == 1){</b>
+<b class="nc">&nbsp;                stdnt.addAchievement(1);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            else if(stdnt.getNumberOfBookings() == 5){</b>
+<b class="nc">&nbsp;                stdnt.addAchievement(2);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            else if (stdnt.getNumberOfBookings() == 10) {</b>
+<b class="nc">&nbsp;                stdnt.addAchievement(3);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            userRepository.save(stdnt);</b>
+&nbsp;            //
+&nbsp;
+<b class="nc">&nbsp;            return success;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.err.println(&quot;Error creating booking: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/printBookingInfo&quot;)
+&nbsp;    public List&lt;Booking&gt; printBookingInfo(){
+<b class="fc">&nbsp;        return bookingRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PutMapping(&quot;/updateBookingInfo&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; updateBookingInfo(@RequestBody BookingRequest bookingRequest) {
+&nbsp;        // Find the current booking by ID
+<b class="nc">&nbsp;        Optional&lt;Booking&gt; currentBookingOptional = bookingRepository.findBookingByID(bookingRequest.getID());</b>
+&nbsp;
+&nbsp;        // Check if the current booking is present
+<b class="nc">&nbsp;        if (currentBookingOptional.isEmpty()) {</b>
+&nbsp;            // Return failure response if not found
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(&quot;Booking not found&quot;, HttpStatus.NOT_FOUND);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Get the current booking from optional
+<b class="nc">&nbsp;        Booking currentBooking = currentBookingOptional.get();</b>
+&nbsp;
+&nbsp;        // Set the new properties on the current booking
+<b class="nc">&nbsp;        currentBooking.setSubject(bookingRequest.getSubject());</b>
+<b class="nc">&nbsp;        currentBooking.setStartTime(bookingRequest.getStartTime());</b>
+<b class="nc">&nbsp;        currentBooking.setEndTime(bookingRequest.getEndTime());</b>
+<b class="nc">&nbsp;        currentBooking.setDate(bookingRequest.getDate());</b>
+&nbsp;
+&nbsp;        // Save the updated booking back to the repository
+<b class="nc">&nbsp;        bookingRepository.save(currentBooking);</b>
+&nbsp;
+&nbsp;        // Return a success response
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(success, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteBooking/{id}&quot;)
+&nbsp;    public String deleteBooking(@PathVariable int id) {
+<b class="fc">&nbsp;        Optional&lt;Booking&gt; currentBookingOptional = bookingRepository.findBookingByID(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (currentBookingOptional.isEmpty()) {</b>
+&nbsp;            // Return failure response if not found
+<b class="fc">&nbsp;            return failure;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Get the booking from optional
+<b class="fc">&nbsp;        Booking bookingToDelete = currentBookingOptional.get();</b>
+<b class="fc">&nbsp;        bookingRepository.delete(bookingToDelete);</b>
+&nbsp;
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/deleteAllBooking&quot;)
+&nbsp;    public String deleteAllBooking(){
+<b class="fc">&nbsp;        if(!bookingRepository.findAll().isEmpty()){</b>
+<b class="fc">&nbsp;            bookingRepository.deleteAll();</b>
+<b class="fc">&nbsp;            return &quot;success&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return &quot;failure&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getBookingsByUser/{token}&quot;)
+&nbsp;    public List&lt;Booking&gt; getBookingsByUser(@PathVariable(&quot;token&quot;) String token){
+<b class="nc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="nc">&nbsp;        List&lt;Booking&gt; all = bookingRepository.findAll();</b>
+<b class="nc">&nbsp;        List&lt;Booking&gt; ret = new ArrayList&lt;Booking&gt;();</b>
+<b class="nc">&nbsp;        for (Booking b : all){</b>
+<b class="nc">&nbsp;            if (b.getStudent().getId() == user.getId()){</b>
+<b class="nc">&nbsp;                ret.add(b);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ret;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getBookingsByTeacher/{token}&quot;)
+&nbsp;    public List&lt;Booking&gt; getBookingsByTeacher(@PathVariable(&quot;token&quot;) String token){
+<b class="nc">&nbsp;        User user = tokenStore.getUser(token);</b>
+<b class="nc">&nbsp;        List&lt;Booking&gt; all = bookingRepository.findAll();</b>
+<b class="nc">&nbsp;        List&lt;Booking&gt; ret = new ArrayList&lt;Booking&gt;();</b>
+<b class="nc">&nbsp;        for (Booking b : all){</b>
+<b class="nc">&nbsp;            if (b.getTeacher().getId() == user.getId()){</b>
+<b class="nc">&nbsp;                ret.add(b);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ret;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

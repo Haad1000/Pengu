@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ViewTeachersActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.pengu</a> &gt; <span class="el_source">ViewTeachersActivity.java</span></div><h1>ViewTeachersActivity.java</h1><pre class="source lang-java linenums">package com.example.pengu;
+
+import android.os.Bundle;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L24">public class ViewTeachersActivity extends AppCompatActivity {</span>
+
+    private RecyclerView teacherView;
+    private UserAdptr adptr;
+    private List&lt;JSONObject&gt; teacherList;
+    private VolleySingleton volleySingleton;
+    private RequestQueue requestQueue;
+<span class="nc" id="L31">    private String url = &quot;http://coms-309-037.class.las.iastate.edu:8080/getAllUsers&quot;;</span>
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L35">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L36">        setContentView(R.layout.activity_view_all_teachers);</span>
+
+<span class="nc" id="L38">        teacherView = findViewById(R.id.teacherRecyclerView);</span>
+<span class="nc" id="L39">        teacherView.setLayoutManager(new LinearLayoutManager(this));</span>
+
+        // Initialize VolleySingleton
+<span class="nc" id="L42">        volleySingleton = VolleySingleton.getInstance(this);</span>
+<span class="nc" id="L43">        requestQueue = volleySingleton.getRequestQueue();</span>
+
+        // Initialize the list to hold the teacher users
+<span class="nc" id="L46">        teacherList = new ArrayList&lt;&gt;();</span>
+
+        // Make Volley GET request to fetch users from the backend API
+<span class="nc" id="L49">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L50">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // Parse the JSON response
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L55">                            Log.e(&quot;what is in here&quot;, response.toString());</span>
+                            try {
+<span class="nc" id="L57">                                JSONObject userObject = response.getJSONObject(i);</span>
+<span class="nc" id="L58">                                String role = userObject.getString(&quot;role&quot;);</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                                if (&quot;TEACHER&quot;.equals(role)) {</span>
+                                    // Add the user object to the teacherList
+<span class="nc" id="L61">                                    teacherList.add(userObject);</span>
+                                }
+<span class="nc" id="L63">                            } catch (JSONException e) {</span>
+<span class="nc" id="L64">                                e.printStackTrace();</span>
+<span class="nc" id="L65">                            }</span>
+                        }
+                        // Initialize the adapter with the filtered list of teachers
+<span class="nc" id="L68">                        adptr = new UserAdptr(ViewTeachersActivity.this, teacherList);</span>
+<span class="nc" id="L69">                        teacherView.setAdapter(adptr);</span>
+<span class="nc" id="L70">                    }</span>
+                },
+<span class="nc" id="L72">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L75">                        Log.e(&quot;nvm got error&quot;, error.toString());</span>
+<span class="nc" id="L76">                        error.printStackTrace();</span>
+<span class="nc" id="L77">                    }</span>
+                });
+
+        // Add the request to the RequestQueue
+<span class="nc" id="L81">        volleySingleton.addToRequestQueue(jsonArrayRequest);</span>
+<span class="nc" id="L82">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.2</div></body></html>

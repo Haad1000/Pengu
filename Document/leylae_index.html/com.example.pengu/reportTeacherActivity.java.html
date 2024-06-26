@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>reportTeacherActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.pengu</a> &gt; <span class="el_source">reportTeacherActivity.java</span></div><h1>reportTeacherActivity.java</h1><pre class="source lang-java linenums">package com.example.pengu;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="nc" id="L28">public class reportTeacherActivity extends AppCompatActivity {</span>
+
+    private EditText titletxt, descriptiontxt;
+    private Button submitBtn;
+    private TextView gotorate;
+    private int userid;
+<span class="nc" id="L34">    private String baseUrl = &quot;http://coms-309-037.class.las.iastate.edu:8080/createReport/&quot;;</span>
+    private String reportUrl, authToken;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+<span class="nc" id="L39">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L40">        setContentView(R.layout.activity_report_teacher);</span>
+
+<span class="nc" id="L42">        titletxt = findViewById(R.id.reportTitle);</span>
+<span class="nc" id="L43">        descriptiontxt = findViewById(R.id.reportDescription);</span>
+<span class="nc" id="L44">        submitBtn = findViewById(R.id.submitButton);</span>
+<span class="nc" id="L45">        gotorate = findViewById(R.id.ratingPage);</span>
+
+<span class="nc" id="L47">        Intent intent = getIntent();</span>
+<span class="nc" id="L48">        userid = intent.getIntExtra(&quot;userid&quot;, -1);</span>
+<span class="nc" id="L49">        Log.e(&quot;Teacher ID to report on new page: &quot;, &quot;&quot; + userid);</span>
+
+<span class="nc" id="L51">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;MyAppPreferences&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L52">        authToken = sharedPreferences.getString(&quot;AuthToken&quot;, &quot;&quot;);</span>
+<span class="nc" id="L53">        Log.e(&quot;The user Token is: &quot;, authToken);</span>
+
+<span class="nc" id="L55">        reportUrl = baseUrl + authToken;</span>
+<span class="nc" id="L56">        Log.e(&quot;The new URL being used is: &quot;,reportUrl);</span>
+
+<span class="nc" id="L58">        submitBtn.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L61">                performReportSubmission();</span>
+<span class="nc" id="L62">            }</span>
+        });
+
+<span class="nc" id="L65">        gotorate.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L68">                Intent ratingIntent = new Intent(reportTeacherActivity.this, getTeacherRating.class);</span>
+<span class="nc" id="L69">                ratingIntent.putExtra(&quot;teacherid&quot;, userid);</span>
+<span class="nc" id="L70">                startActivity(ratingIntent);</span>
+<span class="nc" id="L71">            }</span>
+        });
+<span class="nc" id="L73">    }</span>
+    private void performReportSubmission() {
+<span class="nc" id="L75">        String title = titletxt.getText().toString().trim();</span>
+<span class="nc" id="L76">        String description = descriptiontxt.getText().toString().trim();</span>
+
+<span class="nc bnc" id="L78" title="All 4 branches missed.">        if (!title.isEmpty() &amp;&amp; !description.isEmpty()) {</span>
+<span class="nc" id="L79">            JSONObject requestBody = new JSONObject();</span>
+//            &quot;teacherReportedID&quot;: &quot;2&quot;,
+//            &quot;title&quot;: &quot;REALLY BAD&quot;,
+//            &quot;description&quot;: &quot;SMTH&quot;
+            try {
+<span class="nc" id="L84">                requestBody.put(&quot;teacherReportedID&quot;, userid);</span>
+<span class="nc" id="L85">                requestBody.put(&quot;title&quot;, title);</span>
+<span class="nc" id="L86">                requestBody.put(&quot;description&quot;, description);</span>
+            }
+<span class="nc" id="L88">            catch (JSONException e) {</span>
+<span class="nc" id="L89">                e.printStackTrace();</span>
+<span class="nc" id="L90">            }</span>
+
+<span class="nc" id="L92">            VolleySingleton volleySingleton = VolleySingleton.getInstance(this);</span>
+<span class="nc" id="L93">            RequestQueue requestQueue = volleySingleton.getRequestQueue();</span>
+
+<span class="nc" id="L95">            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, reportUrl, requestBody,</span>
+<span class="nc" id="L96">                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+<span class="nc" id="L100">                                String message = response.getString(&quot;message&quot;);</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                                if (message.equals(&quot;success&quot;)) {</span>
+<span class="nc" id="L102">                                    Log.d(&quot;Report Status&quot;, &quot;Success&quot;);</span>
+                                } else {
+<span class="nc" id="L104">                                    Log.d(&quot;Report Status&quot;, &quot;Failure&quot;);</span>
+                                }
+<span class="nc" id="L106">                            } catch (JSONException e) {</span>
+<span class="nc" id="L107">                                e.printStackTrace();</span>
+<span class="nc" id="L108">                            }</span>
+<span class="nc" id="L109">                        }</span>
+                    },
+<span class="nc" id="L111">                    new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L114">                            Log.e(&quot;Volley Error&quot;, error.getMessage());</span>
+<span class="nc" id="L115">                        }</span>
+<span class="nc" id="L116">                    }) {</span>
+                @Override
+                public Map&lt;String, String&gt; getHeaders() throws AuthFailureError {
+
+<span class="nc" id="L120">                    Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L121">                    headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L122">                    return headers;</span>
+                }
+            };
+
+<span class="nc" id="L126">            requestQueue.add(request);</span>
+
+        }
+<span class="nc" id="L129">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.2</div></body></html>

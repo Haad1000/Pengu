@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Rating</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">code.Rating</a>
+</div>
+
+<h1>Coverage Summary for Class: Rating (code.Rating)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Rating</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (14/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (20/22)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$6z0pjJPy</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$bPcjJ0uF</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$dBKY9nta</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$hNNeYOIo</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$JmyyuByE</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$KA8HqIoI</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$q6HQ3un3</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$QfqakvLm</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$qVhmiwE8</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$XF4wEAQo</td>
+  </tr>
+  <tr>
+    <td class="name">Rating$HibernateProxy$yQyJRZhR</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (14/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (20/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package code.Rating;
+&nbsp;
+&nbsp;import code.Users.User;
+&nbsp;
+&nbsp;import javax.persistence.*;
+&nbsp;
+&nbsp;@Entity
+&nbsp;public class Rating {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private int id;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    private User student;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    private User teacher;
+&nbsp;
+&nbsp;    private int overall_rating;
+&nbsp;
+&nbsp;    private int communication_rating;
+&nbsp;
+&nbsp;    private int teaching_rating;
+&nbsp;
+&nbsp;    private int recommend_rating;
+&nbsp;
+<b class="fc">&nbsp;    public Rating(User student, User teacher, int communication_rating, int teaching_rating, int recommend_rating) {</b>
+<b class="fc">&nbsp;        this.student = student;</b>
+<b class="fc">&nbsp;        this.teacher = teacher;</b>
+<b class="fc">&nbsp;        this.overall_rating = (communication_rating + teaching_rating + recommend_rating) / 3;</b>
+<b class="fc">&nbsp;        this.communication_rating = communication_rating;</b>
+<b class="fc">&nbsp;        this.teaching_rating = teaching_rating;</b>
+<b class="fc">&nbsp;        this.recommend_rating = recommend_rating;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public Rating(){}</b>
+&nbsp;
+&nbsp;    public User getStudent() {
+<b class="fc">&nbsp;        return student;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStudent(User student) {
+<b class="nc">&nbsp;        this.student = student;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getTeacher() {
+<b class="fc">&nbsp;        return teacher;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTeacher(User teacher) {
+<b class="nc">&nbsp;        this.teacher = teacher;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getOverall_rating() {
+<b class="fc">&nbsp;        return overall_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOverall_rating(int overall_rating) {
+<b class="fc">&nbsp;        this.overall_rating = overall_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getCommunication_rating() {
+<b class="fc">&nbsp;        return communication_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCommunication_rating(int communication_rating) {
+<b class="fc">&nbsp;        this.communication_rating = communication_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getTeaching_rating() {
+<b class="fc">&nbsp;        return teaching_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTeaching_rating(int teaching_rating) {
+<b class="fc">&nbsp;        this.teaching_rating = teaching_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getRecommend_rating() {
+<b class="fc">&nbsp;        return recommend_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRecommend_rating(int recommend_rating) {
+<b class="fc">&nbsp;        this.recommend_rating = recommend_rating;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(int id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-01 15:27</div>
+</div>
+</body>
+</html>

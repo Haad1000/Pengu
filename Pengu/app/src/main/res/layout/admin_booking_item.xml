@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:columnCount="2"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/subjectNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Subject name "
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/teacherNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="teacherName "
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/studentNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="stuentName "
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/startTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="startTime "
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/endTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="endTime "
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="date"
+        android:textSize="16sp" />
+    <ImageView
+        android:id="@+id/deleteBookingImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contentDescription="to delete"
+        android:focusable="true"
+        android:padding="8dp"
+        android:src="@drawable/delete" />
+
+    <ImageView
+        android:id="@+id/editBookingImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contentDescription="to delete"
+        android:focusable="true"
+        android:padding="8dp"
+        android:src="@drawable/edit_pencil" />
+    <!--    android:contentDescription="@string/edit_subject"-->
+
+</GridLayout>
+<!--    android:layout_marginBottom="40dp"-->

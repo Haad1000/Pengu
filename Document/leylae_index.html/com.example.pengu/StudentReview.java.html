@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentReview.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.pengu</a> &gt; <span class="el_source">StudentReview.java</span></div><h1>StudentReview.java</h1><pre class="source lang-java linenums">package com.example.pengu;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.List;
+import java.util.ArrayList;
+import android.widget.Toast;
+import com.example.pengu.Review;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import org.json.JSONObject;
+
+import org.json.JSONException;
+import org.java_websocket.handshake.ServerHandshake;
+import org.w3c.dom.Text;
+import android.util.Log;
+
+<span class="nc" id="L28">public class StudentReview extends AppCompatActivity implements WebSocketListener {</span>
+//    private String BASE_URL = &quot;ws://10.0.2.2:8080/chat/&quot;;
+    // private String BASE_URL = &quot;ws://coms-309-037.class.las.iastate.edu:8080/review/&quot;;
+
+    private Button connectBtn, sendBtn,backMainBtn;
+    private EditText usernameEtx, msgEtx, profnameEtx;//msgEtx is where you write your message
+    // usernameEtx should be read on its own with the login
+    private TextView msgTv;//this is where the chat appear
+    private RecyclerView reviewsRecyclerView;
+    private ReviewsAdapter reviewsAdapter;
+<span class="nc" id="L38">    private List&lt;Review&gt; reviewList = new ArrayList&lt;&gt;();</span>
+
+
+    @SuppressLint(&quot;MissingInflatedId&quot;)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L44">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L45">        setContentView(R.layout.activity_student_review);</span>
+
+        // connectBtn = (Button) findViewById(R.id.button3);
+<span class="nc" id="L48">        sendBtn = (Button) findViewById(R.id.submitReviewButton);</span>
+        //usernameEtx = (EditText) findViewById(R.id.et1);
+        // profnameEtx = (EditText) findViewById(R.id.et2);
+<span class="nc" id="L51">        msgEtx = (EditText) findViewById(R.id.reviewEditText);</span>
+        // msgTv = (TextView) findViewById(R.id.tx1);
+
+        // Initialize RecyclerView
+<span class="nc" id="L55">        reviewsRecyclerView = findViewById(R.id.reviewsRecyclerView);</span>
+<span class="nc" id="L56">        reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));</span>
+<span class="nc" id="L57">        reviewsAdapter = new ReviewsAdapter(reviewList);</span>
+<span class="nc" id="L58">        reviewsRecyclerView.setAdapter(reviewsAdapter);</span>
+
+        /* connect button listener */
+//        connectBtn.setOnClickListener(view -&gt; {
+//            try {
+//                String userName = usernameEtx.getText().toString() + &quot;@email.com&quot;;
+//                String teacherName = profnameEtx.getText().toString() + &quot;@email.com&quot;;
+//                String serverUrl = BASE_URL + userName + &quot;/&quot; + teacherName;
+//
+//                // Log the serverUrl for debugging purposes
+//                Log.d(&quot;StudentReview&quot;, &quot;Server URL: &quot; + serverUrl);
+//
+//                WebSocketManager.getInstance().connectWebSocket(serverUrl);
+//                WebSocketManager.getInstance().setWebSocketListener(StudentReview.this);
+//
+//                // If this line is reached, the button is being clicked
+//                Log.d(&quot;StudentReview&quot;, &quot;Connect button clicked&quot;);
+//            } catch (Exception e) {
+//                Log.e(&quot;StudentReview&quot;, &quot;Error in connectBtn click listener&quot;, e);
+//            }
+//        });
+<span class="nc" id="L79">        WebSocketManager.getInstance().setWebSocketListener(StudentReview.this);</span>
+
+//        // Set the WebSocketListener to this activity
+//        WebSocketManager.getInstance().setWebSocketListener(this);
+//
+//        // Automatically connect to the WebSocket server when the activity starts
+//        WebSocketManager.getInstance().connectWebSocket(&quot;ws://10.0.2.2:8080/chat/&quot;);
+<span class="nc" id="L86">        sendBtn.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L87">            String messageToSend = msgEtx.getText().toString();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (!messageToSend.isEmpty()) {</span>
+<span class="nc" id="L89">                WebSocketManager.getInstance().sendMessage(messageToSend);</span>
+<span class="nc" id="L90">                msgEtx.setText(&quot;&quot;);</span>
+            }
+<span class="nc" id="L92">        });</span>
+
+        /* back button listener */
+//        backMainBtn.setOnClickListener(view -&gt; {
+//            // got to chat activity
+//            Intent intent = new Intent(this, MainActivity.class);
+//            startActivity(intent);
+//        });
+
+//        sendBtn.setOnClickListener(v -&gt; {
+//            String message = msgEtx.getText().toString();
+//            if (!message.isEmpty()) {
+//                WebSocketManager.getInstance().sendMessage(message);
+//                msgEtx.setText(&quot;&quot;); // Clear the input field after sending the message
+//            } else {
+//                Toast.makeText(this, &quot;Please enter a review before sending.&quot;, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+<span class="nc" id="L110">        reviewList.add(new Review(&quot;User1&quot;, &quot;Test review 1&quot;));</span>
+<span class="nc" id="L111">        reviewList.add(new Review(&quot;User2&quot;, &quot;Test review 2&quot;));</span>
+<span class="nc" id="L112">        reviewList.add(new Review(&quot;User3&quot;, &quot;Test review 3&quot;));</span>
+<span class="nc" id="L113">        reviewsAdapter.notifyDataSetChanged();</span>
+
+
+
+<span class="nc" id="L117">    }</span>
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+<span class="nc" id="L121">        Log.d(&quot;StudentReview&quot;, &quot;WebSocket connected&quot;);</span>
+<span class="nc" id="L122">        runOnUiThread(() -&gt; {</span>
+<span class="nc" id="L123">            Toast.makeText(this, &quot;Connected to WebSocket server&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L124">        });</span>
+<span class="nc" id="L125">    }</span>
+
+    @Override
+    public void onWebSocketMessage(String message) {
+        // Assuming &quot; has Joined the Chat&quot; is the part of the message you want to filter out
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (!message.contains(&quot;has Joined the Chat&quot;)) {</span>
+            // Split the incoming message to extract the username and message
+<span class="nc" id="L132">            String[] parts = message.split(&quot;:&quot;, 2);</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            if (parts.length == 2) {</span>
+<span class="nc" id="L134">                String username = parts[0].trim();</span>
+<span class="nc" id="L135">                String reviewText = parts[1].trim();</span>
+
+                // Create a new Review object and add it to the list
+<span class="nc" id="L138">                Review newReview = new Review(username, reviewText);</span>
+
+<span class="nc" id="L140">                runOnUiThread(() -&gt; {</span>
+<span class="nc" id="L141">                    reviewList.add(newReview);</span>
+<span class="nc" id="L142">                    reviewsAdapter.notifyDataSetChanged();</span>
+<span class="nc" id="L143">                });</span>
+            }
+<span class="nc" id="L145">        } else {</span>
+            // Log or handle user join messages differently if needed
+<span class="nc" id="L147">            Log.d(&quot;WebSocket&quot;, &quot;User join message received and not displayed: &quot; + message);</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+<span class="nc" id="L153">        Log.d(&quot;StudentReview&quot;, &quot;WebSocket closed&quot;);</span>
+        // Handle the closing of the WebSocket connection
+<span class="nc" id="L155">    }</span>
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+<span class="nc" id="L159">        Log.d(&quot;StudentReview&quot;, &quot;WebSocket error: &quot; + ex.getMessage());</span>
+        // Handle any WebSocket errors
+<span class="nc" id="L161">    }</span>
+
+    // Don't forget to disconnect from the WebSocket when the activity is destroyed
+    @Override
+    protected void onDestroy() {
+<span class="nc" id="L166">        super.onDestroy();</span>
+<span class="nc" id="L167">        WebSocketManager.getInstance().disconnectWebSocket();</span>
+<span class="nc" id="L168">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.2</div></body></html>
